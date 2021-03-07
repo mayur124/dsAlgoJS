@@ -1,5 +1,3 @@
-console.clear();
-
 class Queue {
     constructor() {
         this.queue = [];
