@@ -1,5 +1,3 @@
-console.clear();
-
 class GraphMatrix {
     constructor(nodeCount) {
         this.nodeCount = nodeCount;
