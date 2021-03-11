@@ -51,23 +51,26 @@ class Tree {
         }
     }
     // <BFS>
-    breadthFirstTraversal(node = this.root) {
-        if(!node) return;
+    breadthFirstTraversal(node=this.root) {
+        if (!node)
+            return;
         let output = [];
         let queue = new Queue();
         queue.enqueue(node);
         while (queue.getQueueSize() != 0) {
             let current = queue.getFirstElement();
             output.push(current.data);
-            if (current.left != null) queue.enqueue(current.left);
-            if (current.right != null) queue.enqueue(current.right);
+            if (current.left != null)
+                queue.enqueue(current.left);
+            if (current.right != null)
+                queue.enqueue(current.right);
             queue.dequeue();
         }
         return output.join(" ");
     }
     // </BFS>
     // <DFS>
-    preOrderTraversal(root = this.root, output = []) {
+    preOrderTraversal(root=this.root, output=[]) {
         // pre-order traversal -> Node - Left - Right
         if (root != null) {
             output.push(root.data);
@@ -76,7 +79,7 @@ class Tree {
         }
         return output.join(" ");
     }
-    postOrderTraversal(root = this.root, output = []) {
+    postOrderTraversal(root=this.root, output=[]) {
         // post-order traversal -> left - Right - Node
         if (root != null) {
             this.postOrderTraversal(root.left, output);
@@ -85,7 +88,7 @@ class Tree {
         }
         return output.join(" ");
     }
-    inOrderTraversal(root = this.root, output = []) {
+    inOrderTraversal(root=this.root, output=[]) {
         // in-order traversal -> Left - Node - Right
         if (root != null) {
             this.inOrderTraversal(root.left, output);
@@ -95,28 +98,50 @@ class Tree {
         return output.join(" ");
     }
     // </DFS>
-    getMinimumNodeValue(node = this.root) {
-        while(node.left != null) {
+    getMinimumNodeValue(node=this.root) {
+        while (node.left != null) {
             node = node.left;
         }
         return node;
     }
-    delete(num, node = this.root) {
-        if (!node) return null;
+    delete(num, node=this.root) {
+        if (!node)
+            return null;
         if (num < node.data) {
             node.left = this.delete(num, node.left);
-        }
-        else if (num > node.data) {
+        } else if (num > node.data) {
             node.right = this.delete(num, node.right);
-        }
-        else if (node.left != null && node.right != null) {
+        } else if (node.left != null && node.right != null) {
             node.data = this.getMinimumNodeValue(node.right).data;
             node.right = this.delete(node.data, node.right);
-        }
-        else {
+        } else {
             node = node.left || node.right;
         }
         return node;
+    }
+    printLeftView(node=this.root) {
+        let leftNodes = [];
+        let output = [];
+        this._createLevelWiseArr(node, output);
+        for(let op of output) {
+            leftNodes.push(op[0]);
+        }
+        return leftNodes.join(' ');
+    }
+    printRightView(node = this.root) {
+        let rightNodes = [];
+        let output = [];
+        this._createLevelWiseArr(node, output);
+        for(let op of output) {
+            rightNodes.push(op.pop());
+        }
+        return rightNodes.join(' ');
+    }
+    _createLevelWiseArr(node, output, level = 0) {
+        if (!node) return null;
+        output[level] = output[level] ? [...output[level], node.data] : [node.data];
+        this._createLevelWiseArr(node.left, output, level+1);
+        this._createLevelWiseArr(node.right, output, level+1);
     }
 }
 
@@ -132,6 +157,9 @@ console.log('BFS >', tree.breadthFirstTraversal());
 console.log('PreOrder >', tree.preOrderTraversal());
 console.log('InOrder >', tree.inOrderTraversal());
 console.log('PostOrder >', tree.postOrderTraversal());
+
+console.log('LeftView > ', tree.printLeftView());
+console.log('RightView > ', tree.printRightView());
 
 tree.delete(9);
 console.log('InOrder after delete >', tree.inOrderTraversal());
