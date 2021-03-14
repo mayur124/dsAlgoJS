@@ -1,103 +1,140 @@
-console.clear();
-
 class Node {
     constructor(data) {
         this.data = data;
         this.next = null;
     }
 }
+
 class LinkedList {
     constructor() {
         this.head = null;
-        this.count = 0;
+        this.size = 0;
     }
-    addNode(node) {
-        if (this.head == null) {
-            this.head = node;
+    increaseSize() {
+        this.size = this.size + 1;
+    }
+    decreaseSize() {
+        this.size = this.size - 1;
+    }
+    insertNode(data) {
+        if (!this.head) {
+            this.head = new Node(data);
         } else {
             let current = this.head;
-            while (current.next) {
+            while (current.next != null) {
                 current = current.next;
             }
-            current.next = node;
+            current.next = new Node(data);
         }
-
-        this.incrementCount();
+        this.increaseSize();
     }
-    removeNode(node) {
-        if (this.count == 1 && this.head.data == node.data) {
-            delete this.head;
+    insertNodeAt(index, data) {
+        if (index <= 0) {
+            console.log('Inserting new node at the beginning');
+            let newNode = new Node(data);
+            let currentHead = this.head;
+            newNode.next = currentHead;
+            this.head = newNode;
         }
-        if (this.count > 0 && this.head.data == node.data) {
-            let next = this.head.next;
-            delete this.head;
-            this.head = next;
-        } else {
-            let prev = this.head;
-            let next = prev.next;
-            while (prev) {
-                if (prev.data == node.data) {
-                    prev.data = next?.data;
-                    prev.next = next?.next;
-                    this.decrementCount();
-                    break;
-                }
-                prev = next;
-                next = next.next;
+        else if (index >= this.size) {
+            console.log('Inserting new node at the end');
+            this.insertNode(data);
+        }
+        else {
+            let currentIndex = 1;
+            let previousNode = this.head;
+            let nextNode = this.head.next;
+            while(currentIndex < index) {
+                previousNode = nextNode;
+                nextNode = nextNode.next;
+                ++currentIndex;
             }
+            let newNode = new Node(data);
+            previousNode.next = newNode;
+            newNode.next = nextNode;
         }
+        this.increaseSize();
+    }
+    _removeAtBeginning() {
+        if(this.size == 1) {
+            delete this.head;
+        }
+        else {
+            this.head = this.head.next;
+        }
+        this.decreaseSize();
+    }
+    _removeAtEnd() {
+        if (this.size == 1) {
+            this._removeAtBeginning();
+        }
+        else {
+            let previousNode = this.head;
+            let nextNode = this.head.next;
+            while(nextNode.next) {
+                previousNode = previousNode.next;
+                nextNode = nextNode.next;
+            }
+            previousNode.next = null;
+        }
+        this.decreaseSize();
+    }
+    removeAt(index) {
+        if (index <= 0) {
+            console.log('Removing node from beginning');
+            this._removeAtBeginning();
+        }
+        else if (index >= this.size) {
+            console.log('Removing node from end');
+            this._removeAtEnd();
+        }
+        else {
+            let currentIndex = 1;
+            let previousNode = this.head;
+            let nextNode = this.head.next;
+            while(currentIndex < index) {
+                previousNode = previousNode.next;
+                nextNode = nextNode.next;
+                ++currentIndex;
+            }
+            previousNode.next = nextNode.next;
+        }
+        this.decreaseSize();
     }
     print() {
         let current = this.head;
-        while (current) {
-            if (current?.data) {
-                console.log(current.data);
-            }
+        let output = [];
+        while(current) {
+            output.push(current.data);
             current = current.next;
         }
-    }
-    printReverse(currentNode=this.head) {
-        if (currentNode == undefined)
-            return;
-        this.printReverse(currentNode.next);
-        if (currentNode?.data) {
-            console.log(currentNode.data);
-        }
-    }
-    incrementCount() {
-        this.count += 1;
-    }
-    decrementCount() {
-        this.count -= 1;
+        console.log('LinkedList > ', output.join(', '));
     }
 }
 
-let node1 = new Node(1);
-let node2 = new Node(2);
-let node3 = new Node(3);
-let node4 = new Node(4);
-let node5 = new Node(5);
-let node6 = new Node(6);
+let list = new LinkedList();
+list.insertNode(1);
+list.insertNode(2);
+list.insertNode(3);
+list.insertNode(4);
 
-let linkedList = new LinkedList();
+list.insertNodeAt(0, 0);
+list.insertNodeAt(2, 2.1);
+list.insertNodeAt(10, 10);
 
-linkedList.addNode(node1);
-linkedList.addNode(node2);
-linkedList.addNode(node3);
-linkedList.addNode(node4);
-linkedList.addNode(node5);
-linkedList.addNode(node6);
+console.log('Before removing nodes');
+list.print();
 
-linkedList.print();
+console.log('------------------------------------');
 
-console.log('\n');
+list.removeAt(-1);
+console.log('After removing node');
+list.print();
 
-linkedList.printReverse();
+list.removeAt(10);
+console.log('After removing node');
+list.print();
 
-console.log('\n');
-
-linkedList.removeNode(node3);
-linkedList.removeNode(node6);
-linkedList.removeNode(node1);
-
-linkedList.print();
+list.removeAt(2);
+console.log('After removing node');
+list.print();
